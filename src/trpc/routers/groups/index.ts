@@ -11,6 +11,7 @@ import { updateGroupProcedure } from '@/trpc/routers/groups/update.procedure'
 import { getGroupDetailsProcedure } from './getDetails.procedure'
 import { importSplitwiseCsvProcedure } from './importSplitwiseCsv.procedure'
 import { listGroupsProcedure } from './list.procedure'
+import { toggleSimplifyDebtsProcedure } from './toggleSimplifyDebts.procedure'
 
 export const groupsRouter = createTRPCRouter({
   expenses: groupExpensesRouter,
@@ -26,4 +27,5 @@ export const groupsRouter = createTRPCRouter({
   delete: deleteGroupProcedure,
   restore: restoreGroupProcedure,
   importSplitwiseCsv: importSplitwiseCsvProcedure,
+  toggleSimplifyDebts: toggleSimplifyDebtsProcedure,
 })

@@ -122,5 +122,89 @@ export function getSuggestedReimbursements(
       balancesArray.shift()
     }
   }
-  return reimbursements.filter(({ amount }) => Math.round(amount) + 0 !== 0)
+    return reimbursements.filter(({ amount }) => Math.round(amount) + 0 !== 0)
 }
+
+export const getReimbursements = getSuggestedReimbursements
+
+/**
+ * Computes direct pairwise debts between participants without cross-settling
+ * across third parties.
+ *
+ * - For each expense, records the debt owed by each non-payer participant
+ *   directly to the payer (`paidBy`).
+ * - Nets out reciprocal bilateral balances between each pair (e.g. if A owes B
+ *   £30 and B owes A £10, nets out to A owes B £20).
+ * - Preserves debt isolation strictly between the two participants involved in
+ *   each transaction.
+ */
+export function getDirectPairwiseDebts(
+  expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>,
+  participants?: Pick<Participant, 'id'>[],
+): Reimbursement[] {
+  // Track bilateral net flow for canonical pair `a < b`:
+  // positive means `a` owes `b`, negative means `b` owes `a`.
+  const pairNet = new Map<string, { a: string; b: string; aOwesB: number }>()
+
+  for (const expense of expenses) {
+    const payerId = expense.paidBy.id
+    const dividedAmounts = getExpenseShares({
+      id: expense.id,
+      amount: expense.amount,
+      splitMode: expense.splitMode,
+      paidFor: expense.paidFor.map(({ participant, shares }) => ({
+        participantId: participant.id,
+        shares,
+      })),
+    })
+
+    dividedAmounts.forEach((shareAmount, participantId) => {
+      if (participantId === payerId || shareAmount === 0) return
+
+      const [a, b] =
+        participantId < payerId
+          ? [participantId, payerId]
+          : [payerId, participantId]
+      const key = `${a}:::${b}`
+      let entry = pairNet.get(key)
+      if (!entry) {
+        entry = { a, b, aOwesB: 0 }
+        pairNet.set(key, entry)
+      }
+
+      // `participantId` owes `payerId` `shareAmount`
+      if (participantId === a) {
+        entry.aOwesB += shareAmount
+      } else {
+        entry.aOwesB -= shareAmount
+      }
+    })
+  }
+
+  const validParticipantIds = participants
+    ? new Set(participants.map((p) => p.id))
+    : null
+
+  const reimbursements: Reimbursement[] = []
+  const sortedEntries = [...pairNet.values()].sort((x, y) =>
+    x.a !== y.a ? (x.a < y.a ? -1 : 1) : x.b < y.b ? -1 : 1,
+  )
+
+  for (const { a, b, aOwesB } of sortedEntries) {
+    if (
+      validParticipantIds &&
+      (!validParticipantIds.has(a) || !validParticipantIds.has(b))
+    ) {
+      continue
+    }
+    const rounded = Math.round(aOwesB) + 0
+    if (rounded > 0) {
+      reimbursements.push({ from: a, to: b, amount: rounded })
+    } else if (rounded < 0) {
+      reimbursements.push({ from: b, to: a, amount: -rounded })
+    }
+  }
+
+  return reimbursements
+}
+

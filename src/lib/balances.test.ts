@@ -1,5 +1,9 @@
 import { getGroupExpenses } from '@/lib/api'
-import { getBalances, getSuggestedReimbursements } from './balances'
+import {
+  getBalances,
+  getDirectPairwiseDebts,
+  getSuggestedReimbursements,
+} from './balances'
 
 type Expenses = NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
 type Expense = Expenses[number]
@@ -397,3 +401,39 @@ describe('split modes', () => {
     ).toBe(-100)
   })
 })
+
+describe('getDirectPairwiseDebts', () => {
+  it('nets out reciprocal bilateral balances between a pair without cross-settling third parties', () => {
+    // A pays 60 for A & B (B owes A 30)
+    // B pays 20 for A & B (A owes B 10)
+    // Net between A & B: B owes A 20
+    // Meanwhile B pays 40 for B & C (C owes B 20)
+    // Simplified debts would have C pay A 20 directly (skipping B),
+    // whereas Direct Pairwise Debts must keep B owes A 20 AND C owes B 20!
+    const expenses = [
+      evenly('e1', 'alice', 6000, ['alice', 'bob']),
+      evenly('e2', 'bob', 2000, ['alice', 'bob']),
+      evenly('e3', 'bob', 4000, ['bob', 'carol']),
+    ]
+    const participants = [{ id: 'alice' }, { id: 'bob' }, { id: 'carol' }]
+
+    const pairwise = getDirectPairwiseDebts(expenses, participants)
+    expect(pairwise).toEqual([
+      { from: 'bob', to: 'alice', amount: 2000 },
+      { from: 'carol', to: 'bob', amount: 2000 },
+    ])
+
+    // Contrast with simplified reimbursements which collapses B:
+    const simplified = getSuggestedReimbursements(getBalances(expenses))
+    expect(simplified).toEqual([{ from: 'carol', to: 'alice', amount: 2000 }])
+  })
+
+  it('settles pairwise debts to empty when direct repayments are made', () => {
+    const expenses = [
+      evenly('e1', 'alice', 3000, ['alice', 'bob']),
+      expense('bob', 1500, ['alice'], true),
+    ]
+    expect(getDirectPairwiseDebts(expenses)).toEqual([])
+  })
+})
+

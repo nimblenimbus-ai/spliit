@@ -14,16 +14,17 @@ datasource db {
 }
 
 model Group {
-  id           String        @id
-  name         String
-  information  String?       @db.Text
-  currency     String        @default("$")
-  currencyCode String?
-  participants Participant[]
-  expenses     Expense[]
-  activities   Activity[]
-  createdAt    DateTime      @default(now())
-  deleteAt     DateTime?
+  id            String        @id
+  name          String
+  information   String?       @db.Text
+  currency      String        @default("$")
+  currencyCode  String?
+  simplifyDebts Boolean       @default(true)
+  participants  Participant[]
+  expenses      Expense[]
+  activities    Activity[]
+  createdAt     DateTime      @default(now())
+  deleteAt      DateTime?
 }
 
 model Participant {

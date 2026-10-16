@@ -20,6 +20,7 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      simplifyDebts: groupFormValues.simplifyDebts ?? true,
       participants: {
         createMany: {
           data: groupFormValues.participants.map(({ name }) => ({
@@ -372,6 +373,9 @@ export async function updateGroup(
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      ...(groupFormValues.simplifyDebts !== undefined
+        ? { simplifyDebts: groupFormValues.simplifyDebts }
+        : {}),
       participants: {
         deleteMany: existingGroup.participants.filter(
           (p) => !groupFormValues.participants.some((p2) => p2.id === p.id),
@@ -394,6 +398,23 @@ export async function updateGroup(
         },
       },
     },
+  })
+}
+
+export async function updateGroupSimplifyDebts(
+  groupId: string,
+  simplifyDebts: boolean,
+  participantId?: string,
+) {
+  const existingGroup = await getGroup(groupId)
+  if (!existingGroup) throw new Error('Invalid group ID')
+
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId })
+
+  return prisma.group.update({
+    where: { id: groupId },
+    data: { simplifyDebts },
+    include: { participants: true },
   })
 }
 

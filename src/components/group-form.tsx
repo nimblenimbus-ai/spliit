@@ -47,6 +47,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { CurrencySelector } from './currency-selector'
+import { Switch } from './ui/switch'
 import { Textarea } from './ui/textarea'
 
 export type Props = {
@@ -79,6 +80,7 @@ export function GroupForm({
           information: group.information ?? '',
           currency: group.currency ?? '',
           currencyCode: group.currencyCode ?? '',
+          simplifyDebts: group.simplifyDebts ?? true,
           participants: group.participants,
         }
       : {
@@ -86,6 +88,7 @@ export function GroupForm({
           information: '',
           currency: '',
           currencyCode: defaultCurrencyCode, // TODO: derive from the locale when not configured
+          simplifyDebts: true,
           participants: [
             { name: t('Participants.John') },
             { name: t('Participants.Jane') },
@@ -372,14 +375,35 @@ export function GroupForm({
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>
-                    {t('Settings.ActiveUserField.description')}
-                  </FormDescription>
-                </FormItem>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                      <FormDescription>
+                        {t('Settings.ActiveUserField.description')}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                  <FormField
+                    control={form.control}
+                    name="simplifyDebts"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5 pr-4">
+                          <FormLabel>Simplify group debts</FormLabel>
+                          <FormDescription>
+                            Automatically combine debts across members to reduce
+                             the total number of repayments.
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value ?? true}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
         <div className="flex mt-4 gap-2">
           <SubmitButton
             loadingContent={t(group ? 'Settings.saving' : 'Settings.creating')}
