@@ -140,3 +140,13 @@ enum ActivityType {
   SCHEDULE_GROUP_DELETION
   RESTORE_GROUP
 }
+
+model GroupDirectory {
+  id        String   @id @default(cuid())
+  syncKey   String   @unique
+  label     String?
+  groupIds  String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

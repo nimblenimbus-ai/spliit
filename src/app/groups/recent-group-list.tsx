@@ -9,6 +9,7 @@ import {
   RecentGroups,
 } from '@/app/groups/recent-groups-helpers'
 import { ImportSplitwiseCsvButton } from '@/components/import-splitwise-csv-button'
+import { SyncGroupsButton } from '@/components/sync-groups-dialog'
 import { Button } from '@/components/ui/button'
 import { getGroups } from '@/lib/api'
 import { MAX_GROUPS_PER_QUERY } from '@/lib/group-query-limits'
@@ -160,7 +161,7 @@ function RecentGroupList_({
   if (data.groups.length === 0) {
     return (
       <GroupsPage reload={refreshGroupsFromStorage}>
-        <div className="text-sm space-y-2">
+        <div className="text-sm space-y-3">
           <p>{t('NoRecent.description')}</p>
           <p>
             <Button variant="link" asChild className="-m-4">
@@ -168,6 +169,14 @@ function RecentGroupList_({
             </Button>{' '}
             {t('NoRecent.orAsk')}
           </p>
+          <div className="pt-1">
+            <SyncGroupsButton
+              onSuccess={refreshGroupsFromStorage}
+              defaultTab="import"
+              triggerLabel="Import Groups via Sync Code"
+              variant="outline"
+            />
+          </div>
         </div>
       </GroupsPage>
     )
@@ -270,6 +279,7 @@ function GroupsPage({
           <Link href="/groups">{t('myGroups')}</Link>
         </h1>
         <div className="flex flex-wrap gap-2">
+          <SyncGroupsButton onSuccess={reload} />
           <ImportSplitwiseCsvButton onSuccess={reload} />
           <AddGroupByUrlButton reload={reload} />
           <Button asChild>

@@ -34,6 +34,26 @@ export function saveRecentGroup(group: RecentGroup) {
   )
 }
 
+export function mergeRecentGroups(incomingGroups: RecentGroups) {
+  const existingGroups = getRecentGroups()
+  const existingIds = new Set(existingGroups.map((rg) => rg.id))
+  const newGroups: RecentGroups = []
+
+  for (const group of incomingGroups) {
+    if (!group.id || existingIds.has(group.id)) continue
+    existingIds.add(group.id)
+    newGroups.push({ id: group.id, name: group.name })
+  }
+
+  const merged = [...existingGroups, ...newGroups]
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+
+  return {
+    addedCount: newGroups.length,
+    totalCount: merged.length,
+  }
+}
+
 export function deleteRecentGroup(group: RecentGroup) {
   const recentGroups = getRecentGroups()
   localStorage.setItem(
