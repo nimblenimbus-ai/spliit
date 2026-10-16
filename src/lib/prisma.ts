@@ -10,8 +10,15 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 // Prisma 7 ships a Rust-free client and requires an explicit driver adapter.
 // We use the `pg` adapter with the pooled connection string.
 function createPrismaClient() {
+  const connectionString = process.env['POSTGRES_PRISMA_URL'] ?? ''
+  const needsPermissiveSsl =
+    connectionString.includes('sslmode=') &&
+    !connectionString.includes('sslrootcert=')
   const adapter = new PrismaPg({
-    connectionString: process.env['POSTGRES_PRISMA_URL'],
+    connectionString: needsPermissiveSsl
+      ? connectionString.replace(/([?&])sslmode=[^&]+&?/, '$1').replace(/[?&]$/, '')
+      : connectionString,
+    ...(needsPermissiveSsl ? { ssl: { rejectUnauthorized: false } } : {}),
   })
   const client = new PrismaClient({
     adapter,
