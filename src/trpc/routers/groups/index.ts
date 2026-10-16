@@ -9,6 +9,7 @@ import { restoreGroupProcedure } from '@/trpc/routers/groups/restore.procedure'
 import { groupStatsRouter } from '@/trpc/routers/groups/stats'
 import { updateGroupProcedure } from '@/trpc/routers/groups/update.procedure'
 import { getGroupDetailsProcedure } from './getDetails.procedure'
+import { importSplitwiseCsvProcedure } from './importSplitwiseCsv.procedure'
 import { listGroupsProcedure } from './list.procedure'
 
 export const groupsRouter = createTRPCRouter({
@@ -24,4 +25,5 @@ export const groupsRouter = createTRPCRouter({
   update: updateGroupProcedure,
   delete: deleteGroupProcedure,
   restore: restoreGroupProcedure,
+  importSplitwiseCsv: importSplitwiseCsvProcedure,
 })

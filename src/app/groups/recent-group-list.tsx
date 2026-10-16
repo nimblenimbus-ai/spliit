@@ -8,6 +8,7 @@ import {
   getStarredGroups,
   RecentGroups,
 } from '@/app/groups/recent-groups-helpers'
+import { ImportSplitwiseCsvButton } from '@/components/import-splitwise-csv-button'
 import { Button } from '@/components/ui/button'
 import { getGroups } from '@/lib/api'
 import { MAX_GROUPS_PER_QUERY } from '@/lib/group-query-limits'
@@ -268,7 +269,8 @@ function GroupsPage({
         <h1 className="font-bold text-2xl flex-1">
           <Link href="/groups">{t('myGroups')}</Link>
         </h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <ImportSplitwiseCsvButton onSuccess={reload} />
           <AddGroupByUrlButton reload={reload} />
           <Button asChild>
             <Link href="/groups/create">
