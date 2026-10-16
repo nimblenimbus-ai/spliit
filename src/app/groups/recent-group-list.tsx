@@ -136,7 +136,7 @@ function RecentGroupList_({
 
   if (isError) {
     return (
-      <GroupsPage reload={refreshGroupsFromStorage}>
+      <GroupsPage>
         <div className="text-sm space-y-2">
           <p>{t('loadError')}</p>
           <Button variant="secondary" onClick={() => refetch()}>
@@ -149,7 +149,7 @@ function RecentGroupList_({
 
   if (isLoading || !data) {
     return (
-      <GroupsPage reload={refreshGroupsFromStorage}>
+      <GroupsPage>
         <p>
           <Loader2 className="w-4 m-4 mr-2 inline animate-spin" />{' '}
           {t('loadingRecent')}
@@ -160,7 +160,7 @@ function RecentGroupList_({
 
   if (data.groups.length === 0) {
     return (
-      <GroupsPage reload={refreshGroupsFromStorage}>
+      <GroupsPage>
         <div className="text-sm space-y-3">
           <p>{t('NoRecent.description')}</p>
           <p>
@@ -169,14 +169,7 @@ function RecentGroupList_({
             </Button>{' '}
             {t('NoRecent.orAsk')}
           </p>
-          <div className="pt-1">
-            <SyncGroupsButton
-              onSuccess={refreshGroupsFromStorage}
-              defaultTab="import"
-              triggerLabel="Import Groups via Sync Code"
-              variant="outline"
-            />
-          </div>
+          <ImportActionsStack reload={refreshGroupsFromStorage} />
         </div>
       </GroupsPage>
     )
@@ -189,7 +182,7 @@ function RecentGroupList_({
   })
 
   return (
-    <GroupsPage reload={refreshGroupsFromStorage}>
+    <GroupsPage>
       <GlobalBalanceCard groups={groups} />
 
       {starredGroupInfo.length > 0 && (
@@ -232,7 +225,33 @@ function RecentGroupList_({
           </div>
         </>
       )}
+
+      <div className="mt-6">
+        <ImportActionsStack reload={refreshGroupsFromStorage} />
+      </div>
     </GroupsPage>
+  )
+}
+
+function ImportActionsStack({ reload }: { reload: () => void }) {
+  return (
+    <div className="flex flex-col items-start gap-2 pt-1">
+      <SyncGroupsButton
+        onSuccess={reload}
+        defaultTab="import"
+        triggerLabel="Import Groups via Sync Code"
+        variant="outline"
+      />
+      <ImportSplitwiseCsvButton
+        onSuccess={reload}
+        triggerLabel="Import Groups via Splitwise CSV"
+      />
+      <AddGroupByUrlButton
+        reload={reload}
+        triggerLabel="Import via Spliit URL"
+        variant="outline"
+      />
+    </div>
   )
 }
 
@@ -267,26 +286,17 @@ function GroupList({
   )
 }
 
-function GroupsPage({
-  children,
-  reload,
-}: PropsWithChildren<{ reload: () => void }>) {
+function GroupsPage({ children }: PropsWithChildren) {
   const t = useTranslations('Groups')
   return (
     <>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="flex flex-row items-center justify-between gap-2">
         <h1 className="font-bold text-2xl flex-1">
           <Link href="/groups">{t('myGroups')}</Link>
         </h1>
-        <div className="flex flex-wrap gap-2">
-          <SyncGroupsButton onSuccess={reload} />
-          <ImportSplitwiseCsvButton onSuccess={reload} />
-          <AddGroupByUrlButton reload={reload} />
+        <div className="flex gap-2">
           <Button asChild>
-            <Link href="/groups/create">
-              {/* <Plus className="w-4 h-4 mr-2" /> */}
-              {t('create')}
-            </Link>
+            <Link href="/groups/create">{t('create')}</Link>
           </Button>
         </div>
       </div>

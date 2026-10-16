@@ -30,12 +30,15 @@ type Props = {
   onSuccess?: () => void
   /** Render as a compact icon button (e.g. inside a group's Expenses header) */
   iconOnly?: boolean
+  /** Custom label for the button trigger */
+  triggerLabel?: string
 }
 
 export function ImportSplitwiseCsvButton({
   groupId,
   onSuccess,
   iconOnly = false,
+  triggerLabel = 'Import Groups via Splitwise CSV',
 }: Props) {
   const router = useRouter()
   const { toast } = useToast()
@@ -168,7 +171,7 @@ export function ImportSplitwiseCsvButton({
         ) : (
           <Button variant="outline">
             <FileUp className="w-4 h-4 mr-2" />
-            Import Splitwise CSV
+            {triggerLabel}
           </Button>
         )}
       </DialogTrigger>
