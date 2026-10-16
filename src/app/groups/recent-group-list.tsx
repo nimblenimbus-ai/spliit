@@ -248,7 +248,7 @@ function ImportActionsStack({ reload }: { reload: () => void }) {
       />
       <AddGroupByUrlButton
         reload={reload}
-        triggerLabel="Import via Spliit URL"
+        triggerLabel="Import Groups via Spliit URL"
         variant="outline"
       />
     </div>
