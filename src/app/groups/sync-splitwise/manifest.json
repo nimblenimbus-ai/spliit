@@ -1,0 +1,520 @@
+[
+  {
+    "id": "sw-3207185",
+    "name": "Average Friend Fund",
+    "myParticipantId": "sw-p-sw-3207185-6673193",
+    "isActive": false,
+    "updatedAt": "2017-07-22T19:17:45Z"
+  },
+  {
+    "id": "sw-3434158",
+    "name": "Summit run",
+    "myParticipantId": "sw-p-sw-3434158-6673193",
+    "isActive": false,
+    "updatedAt": "2018-02-10T14:00:05Z"
+  },
+  {
+    "id": "sw-4278784-eur",
+    "name": "Pamplona crew (EUR)",
+    "myParticipantId": "sw-p-sw-4278784-eur-6673193",
+    "isActive": false,
+    "updatedAt": "2019-10-27T22:17:31Z"
+  },
+  {
+    "id": "sw-4278784-gbp",
+    "name": "Pamplona crew (GBP)",
+    "myParticipantId": "sw-p-sw-4278784-gbp-6673193",
+    "isActive": false,
+    "updatedAt": "2019-10-27T22:17:31Z"
+  },
+  {
+    "id": "sw-5863453",
+    "name": "uk roadie",
+    "myParticipantId": "sw-p-sw-5863453-6673193",
+    "isActive": false,
+    "updatedAt": "2019-10-27T22:17:19Z"
+  },
+  {
+    "id": "sw-6178767",
+    "name": "Oz",
+    "myParticipantId": "sw-p-sw-6178767-6673193",
+    "isActive": false,
+    "updatedAt": "2018-03-21T13:58:59Z"
+  },
+  {
+    "id": "sw-6310078",
+    "name": "Ireland",
+    "myParticipantId": "sw-p-sw-6310078-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-6334785",
+    "name": "Snowdonia",
+    "myParticipantId": "sw-p-sw-6334785-6673193",
+    "isActive": false,
+    "updatedAt": "2018-02-10T16:25:29Z"
+  },
+  {
+    "id": "sw-6475885",
+    "name": "Slovenia",
+    "myParticipantId": "sw-p-sw-6475885-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-6544984",
+    "name": "Georgia",
+    "myParticipantId": "sw-p-sw-6544984-6673193",
+    "isActive": false,
+    "updatedAt": "2018-02-16T12:49:17Z"
+  },
+  {
+    "id": "sw-6604724",
+    "name": "Tignes",
+    "myParticipantId": "sw-p-sw-6604724-6673193",
+    "isActive": false,
+    "updatedAt": "2018-04-25T19:57:56Z"
+  },
+  {
+    "id": "sw-7118040",
+    "name": "Porto",
+    "myParticipantId": "sw-p-sw-7118040-6673193",
+    "isActive": false,
+    "updatedAt": "2018-07-01T22:42:41Z"
+  },
+  {
+    "id": "sw-7124732",
+    "name": "Flat",
+    "myParticipantId": "sw-p-sw-7124732-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-7413525",
+    "name": "Georgia",
+    "myParticipantId": "sw-p-sw-7413525-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-7964214",
+    "name": "Annecy",
+    "myParticipantId": "sw-p-sw-7964214-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-8980137",
+    "name": "Tri-city",
+    "myParticipantId": "sw-p-sw-8980137-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:47Z"
+  },
+  {
+    "id": "sw-8980148",
+    "name": "Slovakia",
+    "myParticipantId": "sw-p-sw-8980148-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-9123819",
+    "name": "Athens",
+    "myParticipantId": "sw-p-sw-9123819-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-9509969",
+    "name": "Scotland",
+    "myParticipantId": "sw-p-sw-9509969-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-9672103",
+    "name": "Cardiff",
+    "myParticipantId": "sw-p-sw-9672103-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-10189705",
+    "name": "Iceland",
+    "myParticipantId": "sw-p-sw-10189705-6673193",
+    "isActive": false,
+    "updatedAt": "2019-07-11T14:19:12Z"
+  },
+  {
+    "id": "sw-10954972",
+    "name": "M&L's wedding in Scotland",
+    "myParticipantId": "sw-p-sw-10954972-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-11565273",
+    "name": "Cyprus-Jordan-Israel",
+    "myParticipantId": "sw-p-sw-11565273-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-11761287",
+    "name": "Bristol+Bath",
+    "myParticipantId": "sw-p-sw-11761287-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-12109095",
+    "name": "Cross Country Ride 2019",
+    "myParticipantId": "sw-p-sw-12109095-6673193",
+    "isActive": false,
+    "updatedAt": "2023-12-26T21:52:58Z"
+  },
+  {
+    "id": "sw-13746475",
+    "name": "Canada",
+    "myParticipantId": "sw-p-sw-13746475-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-15674476",
+    "name": "Albania",
+    "myParticipantId": "sw-p-sw-15674476-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-15887798",
+    "name": "Flat bills (IJJL)",
+    "myParticipantId": "sw-p-sw-15887798-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-16262609",
+    "name": "Amsterdam",
+    "myParticipantId": "sw-p-sw-16262609-6673193",
+    "isActive": false,
+    "updatedAt": "2019-10-27T21:38:52Z"
+  },
+  {
+    "id": "sw-16600555",
+    "name": "MALAGA",
+    "myParticipantId": "sw-p-sw-16600555-6673193",
+    "isActive": false,
+    "updatedAt": "2020-01-10T13:05:54Z"
+  },
+  {
+    "id": "sw-16842514",
+    "name": "Amster-dude And Damsels",
+    "myParticipantId": "sw-p-sw-16842514-6673193",
+    "isActive": false,
+    "updatedAt": "2023-12-26T21:52:58Z"
+  },
+  {
+    "id": "sw-16901004",
+    "name": "Bari",
+    "myParticipantId": "sw-p-sw-16901004-6673193",
+    "isActive": false,
+    "updatedAt": "2020-06-14T09:58:23Z"
+  },
+  {
+    "id": "sw-17071177",
+    "name": "Poznan-Szczecin",
+    "myParticipantId": "sw-p-sw-17071177-6673193",
+    "isActive": false,
+    "updatedAt": "2020-07-27T15:28:48Z"
+  },
+  {
+    "id": "sw-17071190",
+    "name": "Sardinia",
+    "myParticipantId": "sw-p-sw-17071190-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-19032465",
+    "name": "Ronnan Bills",
+    "myParticipantId": "sw-p-sw-19032465-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-19795501",
+    "name": "Isle of Wight - Velo tour",
+    "myParticipantId": "sw-p-sw-19795501-6673193",
+    "isActive": false,
+    "updatedAt": "2023-12-26T21:52:58Z"
+  },
+  {
+    "id": "sw-20439493",
+    "name": "Lisbon - Dave, Katie & Jek",
+    "myParticipantId": "sw-p-sw-20439493-6673193",
+    "isActive": false,
+    "updatedAt": "2021-02-22T15:05:27Z"
+  },
+  {
+    "id": "sw-20875829",
+    "name": "Tuscany road/WfH trip",
+    "myParticipantId": "sw-p-sw-20875829-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-22862881",
+    "name": "Crete",
+    "myParticipantId": "sw-p-sw-22862881-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-22862965",
+    "name": "Marrakech",
+    "myParticipantId": "sw-p-sw-22862965-6673193",
+    "isActive": false,
+    "updatedAt": "2021-02-22T14:56:16Z"
+  },
+  {
+    "id": "sw-22863118",
+    "name": "Lisbon",
+    "myParticipantId": "sw-p-sw-22863118-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-22863334",
+    "name": "Cluj-Napoca & Abu Dhabi",
+    "myParticipantId": "sw-p-sw-22863334-6673193",
+    "isActive": false,
+    "updatedAt": "2021-05-03T18:23:23Z"
+  },
+  {
+    "id": "sw-24381522",
+    "name": "C A M P I N G",
+    "myParticipantId": "sw-p-sw-24381522-6673193",
+    "isActive": false,
+    "updatedAt": "2021-10-04T20:56:16Z"
+  },
+  {
+    "id": "sw-25606494",
+    "name": "Sicilia familia",
+    "myParticipantId": "sw-p-sw-25606494-6673193",
+    "isActive": false,
+    "updatedAt": "2022-12-03T16:31:02Z"
+  },
+  {
+    "id": "sw-27940898",
+    "name": "Claire Birthday",
+    "myParticipantId": "sw-p-sw-27940898-6673193",
+    "isActive": false,
+    "updatedAt": "2023-03-22T16:43:05Z"
+  },
+  {
+    "id": "sw-33026824",
+    "name": "Peak District",
+    "myParticipantId": "sw-p-sw-33026824-6673193",
+    "isActive": false,
+    "updatedAt": "2022-05-09T11:19:27Z"
+  },
+  {
+    "id": "sw-33287604",
+    "name": "Tenerife",
+    "myParticipantId": "sw-p-sw-33287604-6673193",
+    "isActive": false,
+    "updatedAt": "2023-06-28T06:13:48Z"
+  },
+  {
+    "id": "sw-34677944",
+    "name": "Dave's b'day",
+    "myParticipantId": "sw-p-sw-34677944-6673193",
+    "isActive": false,
+    "updatedAt": "2023-05-13T16:02:41Z"
+  },
+  {
+    "id": "sw-34938759",
+    "name": "David Bucks",
+    "myParticipantId": "sw-p-sw-34938759-6673193",
+    "isActive": false,
+    "updatedAt": "2022-07-20T16:27:44Z"
+  },
+  {
+    "id": "sw-38688788",
+    "name": "Sicily, cos why not",
+    "myParticipantId": "sw-p-sw-38688788-6673193",
+    "isActive": false,
+    "updatedAt": "2025-01-20T19:37:43Z"
+  },
+  {
+    "id": "sw-41519342",
+    "name": "Morrocco",
+    "myParticipantId": "sw-p-sw-41519342-6673193",
+    "isActive": false,
+    "updatedAt": "2023-03-04T11:52:16Z"
+  },
+  {
+    "id": "sw-46064316",
+    "name": "Val Thorens 2023",
+    "myParticipantId": "sw-p-sw-46064316-6673193",
+    "isActive": false,
+    "updatedAt": "2023-05-18T18:31:29Z"
+  },
+  {
+    "id": "sw-46967218",
+    "name": "Greece 2023 🇬🇷",
+    "myParticipantId": "sw-p-sw-46967218-6673193",
+    "isActive": false,
+    "updatedAt": "2023-05-10T10:33:26Z"
+  },
+  {
+    "id": "sw-48278864",
+    "name": "România 2023",
+    "myParticipantId": "sw-p-sw-48278864-6673193",
+    "isActive": true,
+    "updatedAt": "2025-02-24T22:37:15Z"
+  },
+  {
+    "id": "sw-50895003",
+    "name": "Xmas/NYE/Wedding 🎅🏽🎉👰🌎",
+    "myParticipantId": "sw-p-sw-50895003-6673193",
+    "isActive": false,
+    "updatedAt": "2025-01-20T19:42:45Z"
+  },
+  {
+    "id": "sw-52075002",
+    "name": "Vietnam & Melbourne 2024 ✈️⛱️",
+    "myParticipantId": "sw-p-sw-52075002-6673193",
+    "isActive": false,
+    "updatedAt": "2023-08-03T10:59:31Z"
+  },
+  {
+    "id": "sw-54136474",
+    "name": "Turkey 2023",
+    "myParticipantId": "sw-p-sw-54136474-6673193",
+    "isActive": true,
+    "updatedAt": "2025-10-23T19:45:30Z"
+  },
+  {
+    "id": "sw-62657462",
+    "name": "St Anton 2024",
+    "myParticipantId": "sw-p-sw-62657462-6673193",
+    "isActive": true,
+    "updatedAt": "2026-05-14T07:24:37Z"
+  },
+  {
+    "id": "sw-63078793",
+    "name": "Bologna & A'dam 2024",
+    "myParticipantId": "sw-p-sw-63078793-6673193",
+    "isActive": true,
+    "updatedAt": "2025-08-26T14:48:16Z"
+  },
+  {
+    "id": "sw-65935254",
+    "name": "Glasto",
+    "myParticipantId": "sw-p-sw-65935254-6673193",
+    "isActive": false,
+    "updatedAt": "2024-07-21T11:39:21Z"
+  },
+  {
+    "id": "sw-68658815",
+    "name": "Krit & Jek",
+    "myParticipantId": "sw-p-sw-68658815-6673193",
+    "isActive": true,
+    "updatedAt": "2026-10-03T14:18:58Z"
+  },
+  {
+    "id": "sw-70908767",
+    "name": "South Africa 2025",
+    "myParticipantId": "sw-p-sw-70908767-6673193",
+    "isActive": true,
+    "updatedAt": "2025-08-26T14:47:57Z"
+  },
+  {
+    "id": "sw-71088689",
+    "name": "Tunisia 2024-25",
+    "myParticipantId": "sw-p-sw-71088689-6673193",
+    "isActive": true,
+    "updatedAt": "2025-08-26T14:56:41Z"
+  },
+  {
+    "id": "sw-71284476",
+    "name": "6 Agostone House",
+    "myParticipantId": "sw-p-sw-71284476-6673193",
+    "isActive": true,
+    "updatedAt": "2026-10-11T11:23:19Z"
+  },
+  {
+    "id": "sw-71875261",
+    "name": "Snow trips",
+    "myParticipantId": "sw-p-sw-71875261-6673193",
+    "isActive": true,
+    "updatedAt": "2026-02-03T18:57:51Z"
+  },
+  {
+    "id": "sw-72790656",
+    "name": "ADE Crew 🇳🇱",
+    "myParticipantId": "sw-p-sw-72790656-6673193",
+    "isActive": false,
+    "updatedAt": "2025-09-28T16:58:36Z"
+  },
+  {
+    "id": "sw-77352016",
+    "name": "Bucharest 2025",
+    "myParticipantId": "sw-p-sw-77352016-6673193",
+    "isActive": true,
+    "updatedAt": "2025-07-09T11:23:20Z"
+  },
+  {
+    "id": "sw-77390391",
+    "name": "Val Thorens 2025",
+    "myParticipantId": "sw-p-sw-77390391-6673193",
+    "isActive": false,
+    "updatedAt": "2026-05-14T07:24:37Z"
+  },
+  {
+    "id": "sw-87735759",
+    "name": "Turin 2025",
+    "myParticipantId": "sw-p-sw-87735759-6673193",
+    "isActive": true,
+    "updatedAt": "2025-10-30T10:32:46Z"
+  },
+  {
+    "id": "sw-87907516",
+    "name": "Berlin 2025",
+    "myParticipantId": "sw-p-sw-87907516-6673193",
+    "isActive": true,
+    "updatedAt": "2025-11-16T10:37:58Z"
+  },
+  {
+    "id": "sw-93099024",
+    "name": "Catalonia 2026",
+    "myParticipantId": "sw-p-sw-93099024-6673193",
+    "isActive": true,
+    "updatedAt": "2026-05-25T07:33:47Z"
+  },
+  {
+    "id": "sw-94618942",
+    "name": "Flaine Snow Trip 2026",
+    "myParticipantId": "sw-p-sw-94618942-6673193",
+    "isActive": true,
+    "updatedAt": "2026-06-01T10:10:36Z"
+  },
+  {
+    "id": "sw-100304836",
+    "name": "Malta 2026",
+    "myParticipantId": "sw-p-sw-100304836-6673193",
+    "isActive": true,
+    "updatedAt": "2026-10-16T14:29:57Z"
+  },
+  {
+    "id": "sw-0",
+    "name": "Non-group expenses (1-on-1)",
+    "myParticipantId": "sw-p-sw-0-6673193",
+    "isActive": true,
+    "updatedAt": "2026-10-16T20:43:37Z"
+  }
+]
