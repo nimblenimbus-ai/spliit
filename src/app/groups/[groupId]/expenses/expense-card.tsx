@@ -8,7 +8,7 @@ import { Locale } from '@/i18n/request'
 import { getGroupExpenses } from '@/lib/api'
 import { Currency, getCurrency } from '@/lib/currency'
 import { cn, formatCurrency, formatDateOnly } from '@/lib/utils'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Repeat } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -73,6 +73,9 @@ export function ExpenseCard({
         )
       : null
 
+  const isRecurring =
+    Boolean(expense.recurrenceRule) && expense.recurrenceRule !== 'NONE'
+
   return (
     <div
       key={expense.id}
@@ -118,8 +121,21 @@ export function ExpenseCard({
         <div className="text-xs text-muted-foreground">
           <DocumentsCount count={expense._count.documents} />
         </div>
-        <div className="text-xs text-muted-foreground">
-          {formatDateOnly(expense.expenseDate, locale, { dateStyle: 'medium' })}
+        <div className="text-xs text-muted-foreground flex items-center gap-1.5 whitespace-nowrap">
+          {isRecurring && (
+            <span
+              title={`Recurring (${expense.recurrenceRule?.toLowerCase()})`}
+              aria-label={`Recurring (${expense.recurrenceRule?.toLowerCase()})`}
+              className="inline-flex items-center text-primary"
+            >
+              <Repeat className="w-3.5 h-3.5" />
+            </span>
+          )}
+          <span>
+            {formatDateOnly(expense.expenseDate, locale, {
+              dateStyle: 'medium',
+            })}
+          </span>
         </div>
       </div>
       <Button
