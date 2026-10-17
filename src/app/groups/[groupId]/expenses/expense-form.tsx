@@ -71,6 +71,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { MoveExpenseDialog } from '@/components/MoveExpenseDialog'
 import { DeletePopup } from '../../../../components/delete-popup'
 import { extractCategoryFromTitle } from '../../../../components/expense-form-actions'
 import { Textarea } from '../../../../components/ui/textarea'
@@ -1493,6 +1494,9 @@ export function ExpenseForm({
             <Save className="w-4 h-4 mr-2" />
             {t(isCreate ? 'create' : 'save')}
           </SubmitButton>
+          {!isCreate && expense && (
+            <MoveExpenseDialog sourceGroup={group} expense={expense} />
+          )}
           {!isCreate && onDelete && (
             <DeletePopup
               onDelete={async () => {
