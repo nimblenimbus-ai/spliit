@@ -202,10 +202,8 @@ export function SyncGroupsButton({
     setImportPending(true)
     try {
       const result = await fetchGroupsBySyncKey(trimmedKey)
-      if (result.groups.length === 0) {
-        setImportError(
-          `Sync Key "${result.syncKey}" was found, but none of its groups exist anymore.`,
-        )
+      if (!result.found || result.groups.length === 0) {
+        setImportError('Unrecognised Sync Code.')
         setImportPending(false)
         return
       }
@@ -228,12 +226,8 @@ export function SyncGroupsButton({
       setOpen(false)
       onSuccess?.()
       router.refresh()
-    } catch (err) {
-      setImportError(
-        err instanceof Error
-          ? err.message
-          : 'Invalid Sync Code or failed to fetch groups.',
-      )
+    } catch {
+      setImportError('Unrecognised Sync Code.')
     } finally {
       setImportPending(false)
     }

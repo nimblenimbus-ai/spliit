@@ -54,13 +54,19 @@ export async function createOrUpdateSyncKey(
 export async function fetchGroupsBySyncKey(
   syncKey: string,
 ): Promise<{
+  found: boolean
   syncKey: string
   label: string | null
   groups: SyncedGroupSummary[]
 }> {
   const normalizedKey = syncKey.trim().toUpperCase()
   if (!normalizedKey) {
-    throw new Error('Please enter a valid Sync Key.')
+    return {
+      found: false,
+      syncKey: normalizedKey,
+      label: null,
+      groups: [],
+    }
   }
 
   const directory = await prisma.groupDirectory.findUnique({
@@ -68,9 +74,12 @@ export async function fetchGroupsBySyncKey(
   })
 
   if (!directory) {
-    throw new Error(
-      `No saved groups found for Sync Key "${normalizedKey}". Please check the code and try again.`,
-    )
+    return {
+      found: false,
+      syncKey: normalizedKey,
+      label: null,
+      groups: [],
+    }
   }
 
   const dbGroups = await prisma.group.findMany({
@@ -100,6 +109,7 @@ export async function fetchGroupsBySyncKey(
   }
 
   return {
+    found: true,
     syncKey: directory.syncKey,
     label: directory.label,
     groups: orderedGroups,
