@@ -183,7 +183,10 @@ function RecentGroupList_({
 
   return (
     <GroupsPage>
-      <GlobalBalanceCard groups={groups} />
+      <GlobalBalanceCard
+        groups={groups}
+        archivedGroupIds={archivedGroups}
+      />
 
       {starredGroupInfo.length > 0 && (
         <>
