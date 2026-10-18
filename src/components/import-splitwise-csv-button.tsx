@@ -1,6 +1,8 @@
 'use client'
 
 import {
+  getRecentGroups,
+  RecentGroups,
   saveRecentGroup,
   starGroup,
 } from '@/app/groups/recent-groups-helpers'
@@ -16,12 +18,21 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 import { parseSplitwiseCsv } from '@/lib/splitwise-csv'
+import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { FileUp, Loader2, Upload } from 'lucide-react'
+import { FileUp, Loader2, RefreshCw, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   /** If provided, imports expenses into this existing group instead of creating a new group. */
@@ -46,9 +57,15 @@ export function ImportSplitwiseCsvButton({
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [open, setOpen] = useState(false)
+  const [recentGroups, setRecentGroups] = useState<RecentGroups>([])
+  const [destinationMode, setDestinationMode] = useState<'create' | 'existing'>(
+    groupId ? 'existing' : 'create',
+  )
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(groupId ?? '')
   const [groupName, setGroupName] = useState('')
   const [csvContent, setCsvContent] = useState('')
   const [fileName, setFileName] = useState('')
+  const [syncMode, setSyncMode] = useState<'skip' | 'replace'>('skip')
   const [preview, setPreview] = useState<{
     expensesCount: number
     participants: string[]
@@ -58,12 +75,34 @@ export function ImportSplitwiseCsvButton({
 
   const importMutation = trpc.groups.importSplitwiseCsv.useMutation()
 
+  const effectiveGroupId = groupId || (destinationMode === 'existing' ? selectedGroupId : undefined)
+
+  useEffect(() => {
+    if (open) {
+      const groups = getRecentGroups()
+      setRecentGroups(groups)
+      if (groupId) {
+        setDestinationMode('existing')
+        setSelectedGroupId(groupId)
+      } else {
+        setDestinationMode('create')
+        setSelectedGroupId('')
+      }
+      setSyncMode('skip')
+    }
+  }, [open, groupId])
+
   const resetState = () => {
     setGroupName('')
     setCsvContent('')
     setFileName('')
     setPreview(null)
     setParseError(null)
+    setSyncMode('skip')
+    if (!groupId) {
+      setDestinationMode('create')
+      setSelectedGroupId('')
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -76,8 +115,8 @@ export function ImportSplitwiseCsvButton({
     setFileName(file.name)
     setParseError(null)
 
-    // Default group name from filename (e.g. "malta-2026_2026-10-16_export.csv" -> "Malta 2026")
-    if (!groupId && !groupName) {
+    // Suggest default group name from filename if creating a new group
+    if (!effectiveGroupId && !groupName) {
       const cleaned = file.name
         .replace(/\.csv$/i, '')
         .replace(/_?\d{4}-\d{2}-\d{2}(_export)?$/i, '')
@@ -112,15 +151,21 @@ export function ImportSplitwiseCsvButton({
     e.preventDefault()
     if (!csvContent) return
 
+    if (destinationMode === 'existing' && !effectiveGroupId) {
+      setParseError('Please select a destination group.')
+      return
+    }
+
     try {
       const result = await importMutation.mutateAsync({
         csvContent,
-        groupId,
-        groupName: groupId ? undefined : groupName.trim() || 'Splitwise Import',
+        groupId: effectiveGroupId,
+        groupName: effectiveGroupId ? undefined : groupName.trim() || 'Splitwise Import',
+        syncMode,
       })
 
       saveRecentGroup({ id: result.groupId, name: result.groupName })
-      if (!groupId) {
+      if (!effectiveGroupId) {
         starGroup(result.groupId)
       }
       if (result.jekParticipantId) {
@@ -132,10 +177,22 @@ export function ImportSplitwiseCsvButton({
 
       await utils.groups.invalidate()
 
-      toast({
-        title: 'Splitwise CSV Imported!',
-        description: `Imported ${result.importedExpensesCount} expenses (${result.participantsCount} participants) into "${result.groupName}".`,
-      })
+      if (result.syncMode === 'replace') {
+        toast({
+          title: 'Group Expenses Replaced!',
+          description: `Replaced all expenses in "${result.groupName}" with ${result.importedExpensesCount} expenses from Splitwise.`,
+        })
+      } else if (result.skippedExpensesCount > 0) {
+        toast({
+          title: 'Splitwise CSV Imported!',
+          description: `Added ${result.importedExpensesCount} new expenses to "${result.groupName}" (${result.skippedExpensesCount} duplicates skipped).`,
+        })
+      } else {
+        toast({
+          title: 'Splitwise CSV Imported!',
+          description: `Imported ${result.importedExpensesCount} expenses (${result.participantsCount} participants) into "${result.groupName}".`,
+        })
+      }
 
       setOpen(false)
       resetState()
@@ -175,35 +232,71 @@ export function ImportSplitwiseCsvButton({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleImport} className="space-y-4">
           <DialogHeader>
             <DialogTitle>
-              {groupId
+              {effectiveGroupId
                 ? 'Import Splitwise CSV into Group'
                 : 'Import Group from Splitwise CSV'}
             </DialogTitle>
             <DialogDescription>
-              {groupId
-                ? 'Upload a Splitwise spreadsheet (.csv) export to add its expenses and any new participants into this group.'
-                : 'Upload a Splitwise spreadsheet (.csv) export to create a new group with all participants, categories, currencies, and exact split shares.'}
+              {effectiveGroupId
+                ? 'Upload a Splitwise spreadsheet (.csv) export to update this group with latest expenses and participants.'
+                : 'Upload a Splitwise spreadsheet (.csv) export to create a new group or update an existing one.'}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-2">
-            <Label htmlFor="splitwise-csv-file">Splitwise CSV File</Label>
-            <Input
-              id="splitwise-csv-file"
-              ref={fileInputRef}
-              type="file"
-              accept=".csv,text/csv"
-              onChange={handleFileChange}
-              disabled={importMutation.isPending}
-              required
-            />
-          </div>
+          {/* Group destination selection when launched without preset groupId */}
+          {!groupId && recentGroups.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Destination</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant={destinationMode === 'create' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setDestinationMode('create')}
+                >
+                  Create New Group
+                </Button>
+                <Button
+                  type="button"
+                  variant={destinationMode === 'existing' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setDestinationMode('existing')}
+                >
+                  Update Existing Group
+                </Button>
+              </div>
 
-          {!groupId && (
+              {destinationMode === 'existing' && (
+                <div className="pt-2">
+                  <Label htmlFor="select-existing-group">Select Group</Label>
+                  <Select
+                    value={selectedGroupId}
+                    onValueChange={(val) => {
+                      setSelectedGroupId(val)
+                      setParseError(null)
+                    }}
+                  >
+                    <SelectTrigger id="select-existing-group" className="w-full">
+                      <SelectValue placeholder="Choose an existing group…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {recentGroups.map((rg) => (
+                        <SelectItem key={rg.id} value={rg.id}>
+                          {rg.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!effectiveGroupId && (
             <div className="space-y-2">
               <Label htmlFor="splitwise-group-name">Group Name</Label>
               <Input
@@ -217,6 +310,19 @@ export function ImportSplitwiseCsvButton({
               />
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="splitwise-csv-file">Splitwise CSV File</Label>
+            <Input
+              id="splitwise-csv-file"
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              onChange={handleFileChange}
+              disabled={importMutation.isPending}
+              required
+            />
+          </div>
 
           {preview && (
             <div className="rounded-md bg-muted p-3 text-sm space-y-1">
@@ -236,11 +342,76 @@ export function ImportSplitwiseCsvButton({
             </div>
           )}
 
+          {/* Decision flow for existing group: Skip vs Replace */}
+          {effectiveGroupId && (
+            <div className="space-y-2.5 pt-2 border-t">
+              <Label className="text-sm font-semibold">
+                Decision: Duplicate Handling
+              </Label>
+              <RadioGroup
+                value={syncMode}
+                onValueChange={(val) => setSyncMode(val as 'skip' | 'replace')}
+                className="gap-2"
+              >
+                <label
+                  htmlFor="sync-skip"
+                  className={cn(
+                    'flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors',
+                    syncMode === 'skip'
+                      ? 'border-primary bg-primary/5'
+                      : 'hover:bg-muted/50',
+                  )}
+                >
+                  <RadioGroupItem value="skip" id="sync-skip" className="mt-0.5" />
+                  <div className="space-y-1 text-sm">
+                    <div className="font-medium text-foreground">
+                      Skip existing expenses{' '}
+                      <span className="text-xs text-primary font-semibold">
+                        (Recommended)
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Only imports newly added expenses from the CSV. Existing
+                      expenses with matching date, title, amount, and payer are
+                      kept untouched.
+                    </p>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor="sync-replace"
+                  className={cn(
+                    'flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors',
+                    syncMode === 'replace'
+                      ? 'border-destructive bg-destructive/5'
+                      : 'hover:bg-muted/50',
+                  )}
+                >
+                  <RadioGroupItem
+                    value="replace"
+                    id="sync-replace"
+                    className="mt-0.5"
+                  />
+                  <div className="space-y-1 text-sm">
+                    <div className="font-medium text-destructive">
+                      Replace all existing expenses
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Wipes all current expenses in this group and reloads the
+                      entire CSV fresh. Best when previous expenses were edited,
+                      split differently, or deleted in Splitwise.
+                    </p>
+                  </div>
+                </label>
+              </RadioGroup>
+            </div>
+          )}
+
           {parseError && (
             <p className="text-sm text-destructive font-medium">{parseError}</p>
           )}
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2 sm:gap-0 pt-2">
             <Button
               type="button"
               variant="ghost"
@@ -251,17 +422,34 @@ export function ImportSplitwiseCsvButton({
             </Button>
             <Button
               type="submit"
-              disabled={!csvContent || importMutation.isPending}
+              variant={effectiveGroupId && syncMode === 'replace' ? 'destructive' : 'default'}
+              disabled={
+                !csvContent ||
+                importMutation.isPending ||
+                (destinationMode === 'existing' && !effectiveGroupId)
+              }
             >
               {importMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Importing...
                 </>
+              ) : effectiveGroupId ? (
+                syncMode === 'replace' ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Replace All Expenses
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import New Expenses
+                  </>
+                )
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  {groupId ? 'Import Expenses' : 'Create & Import Group'}
+                  Create &amp; Import Group
                 </>
               )}
             </Button>
