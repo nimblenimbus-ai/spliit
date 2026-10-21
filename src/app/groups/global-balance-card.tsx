@@ -11,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -23,6 +25,7 @@ import { MAX_GROUPS_PER_QUERY } from '@/lib/group-query-limits'
 import { cn, formatCurrency } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { ChevronRight, RefreshCw, User } from 'lucide-react'
+
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -58,6 +61,8 @@ function GlobalBalanceCard_({
   const [selectedCounterparty, setSelectedCounterparty] =
     useState<CounterpartySummary | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [showSettled, setShowSettled] = useState(false)
+
 
   // Load persisted perspective on mount
   useEffect(() => {
@@ -100,6 +105,22 @@ function GlobalBalanceCard_({
       ) ?? selectedCounterparty
     )
   }, [selectedCounterparty, data])
+
+  const unsettledCounterparties = useMemo(() => {
+    if (!data) return []
+    return data.counterparties.filter((cp) => cp.netAmount !== 0)
+  }, [data])
+
+  const settledCounterparties = useMemo(() => {
+    if (!data) return []
+    return data.counterparties.filter((cp) => cp.netAmount === 0)
+  }, [data])
+
+  const displayedCounterparties = useMemo(() => {
+    if (!data) return []
+    return showSettled ? data.counterparties : unsettledCounterparties
+  }, [data, showSettled, unsettledCounterparties])
+
 
   if (isError) {
     return (
@@ -228,22 +249,51 @@ function GlobalBalanceCard_({
 
           {/* Itemised Counterparties Section */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Counterparty Breakdown
               </span>
-              <span className="text-[11px] text-muted-foreground">
-                Click person for details
-              </span>
+
+              {settledCounterparties.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="show-settled"
+                    checked={showSettled}
+                    onCheckedChange={(checked) => setShowSettled(Boolean(checked))}
+                  />
+                  <Label
+                    htmlFor="show-settled"
+                    className="text-xs text-muted-foreground cursor-pointer font-normal select-none hover:text-foreground transition-colors"
+                  >
+                    Show settled ({settledCounterparties.length})
+                  </Label>
+                </div>
+              )}
             </div>
 
             {data.counterparties.length === 0 ? (
               <p className="text-xs text-muted-foreground italic py-2">
                 No counterparties found in your active groups.
               </p>
+            ) : displayedCounterparties.length === 0 ? (
+              <div className="p-4 rounded-xl border border-dashed border-border/80 text-center space-y-2 bg-muted/20">
+                <p className="text-xs text-muted-foreground">
+                  All counterparties are settled up ({settledCounterparties.length}{' '}
+                  {settledCounterparties.length === 1 ? 'person' : 'people'}).
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs h-7"
+                  onClick={() => setShowSettled(true)}
+                >
+                  Show settled participants
+                </Button>
+              </div>
             ) : (
               <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-0.5">
-                {data.counterparties.map((cp) => {
+                {displayedCounterparties.map((cp) => {
+
                   const isOwed = cp.netAmount > 0
                   const isOwing = cp.netAmount < 0
                   const isSettled = cp.netAmount === 0
