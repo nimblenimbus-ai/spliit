@@ -423,21 +423,6 @@ export function GroupForm({
           </div>
           {enableGroupDeletion && group && <DeleteGroupButton group={group} />}
         </div>
-
-        {enableGroupDeletion && group && (
-          <Card className="mt-8 border-destructive/50 bg-destructive/5">
-            <CardHeader>
-              <CardTitle className="text-destructive flex items-center gap-2">
-                <Trash2 className="w-5 h-5" />
-                {t('Delete.title')}
-              </CardTitle>
-              <CardDescription>{t('Delete.description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DeleteGroupButton group={group} />
-            </CardContent>
-          </Card>
-        )}
       </form>
     </Form>
   )
