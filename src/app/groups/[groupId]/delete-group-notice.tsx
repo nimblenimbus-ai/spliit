@@ -1,5 +1,6 @@
 'use client'
 
+import { DeleteGroupDialog } from '@/components/delete-group-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -12,7 +13,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { useActiveUser } from '@/lib/hooks'
 import { formatDate } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useCurrentGroup } from './current-group-context'
@@ -65,18 +66,24 @@ export const DeleteGroupNotice = () => {
             : t('pastDeadline')}
         </CardDescription>
       </CardHeader>
-      {canRestore && (
-        <CardContent>
-          <Button
-            variant="destructive"
-            onClick={restore}
-            disabled={isRestoring}
-          >
+      <CardContent className="flex flex-wrap gap-2">
+        {canRestore && (
+          <Button variant="default" onClick={restore} disabled={isRestoring}>
             {isRestoring && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {t('restore')}
           </Button>
-        </CardContent>
-      )}
+        )}
+        <DeleteGroupDialog
+          group={group}
+          redirectOnSuccess={true}
+          trigger={
+            <Button variant="destructive">
+              <Trash2 className="w-4 h-4 mr-2" />
+              {t('deleteNow')}
+            </Button>
+          }
+        />
+      </CardContent>
     </Card>
   )
 }

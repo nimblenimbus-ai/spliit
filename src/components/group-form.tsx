@@ -68,7 +68,7 @@ export function GroupForm({
   onSubmit,
   protectedParticipantIds = [],
   defaultCurrencyCode = 'USD',
-  enableGroupDeletion = false,
+  enableGroupDeletion = true,
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('GroupForm')
@@ -375,54 +375,60 @@ export function GroupForm({
                       </SelectContent>
                     </Select>
                   </FormControl>
+                  <FormDescription>
+                    {t('Settings.ActiveUserField.description')}
+                  </FormDescription>
+                </FormItem>
+              )}
+              <FormField
+                control={form.control}
+                name="simplifyDebts"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5 pr-4">
+                      <FormLabel>Simplify group debts</FormLabel>
                       <FormDescription>
-                        {t('Settings.ActiveUserField.description')}
+                        Automatically combine debts across members to reduce the
+                        total number of repayments.
                       </FormDescription>
-                    </FormItem>
-                  )}
-                  <FormField
-                    control={form.control}
-                    name="simplifyDebts"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                        <div className="space-y-0.5 pr-4">
-                          <FormLabel>Simplify group debts</FormLabel>
-                          <FormDescription>
-                            Automatically combine debts across members to reduce
-                             the total number of repayments.
-                          </FormDescription>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value ?? true}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-        <div className="flex mt-4 gap-2">
-          <SubmitButton
-            loadingContent={t(group ? 'Settings.saving' : 'Settings.creating')}
-            onClick={updateActiveUser}
-          >
-            <Save className="w-4 h-4 mr-2" />{' '}
-            {t(group ? 'Settings.save' : 'Settings.create')}
-          </SubmitButton>
-          {!group && (
-            <Button variant="ghost" asChild>
-              <Link href="/groups">{t('Settings.cancel')}</Link>
-            </Button>
-          )}
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value ?? true}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        <div className="flex mt-4 gap-2 justify-between items-center">
+          <div className="flex gap-2">
+            <SubmitButton
+              loadingContent={t(
+                group ? 'Settings.saving' : 'Settings.creating',
+              )}
+              onClick={updateActiveUser}
+            >
+              <Save className="w-4 h-4 mr-2" />{' '}
+              {t(group ? 'Settings.save' : 'Settings.create')}
+            </SubmitButton>
+            {!group && (
+              <Button variant="ghost" asChild>
+                <Link href="/groups">{t('Settings.cancel')}</Link>
+              </Button>
+            )}
+          </div>
+          {enableGroupDeletion && group && <DeleteGroupButton group={group} />}
         </div>
 
-        {enableGroupDeletion && group && !group.deleteAt && (
-          <Card className="mt-8 border-red-700">
+        {enableGroupDeletion && group && (
+          <Card className="mt-8 border-destructive/50 bg-destructive/5">
             <CardHeader>
-              <CardTitle className="text-red-700">
+              <CardTitle className="text-destructive flex items-center gap-2">
+                <Trash2 className="w-5 h-5" />
                 {t('Delete.title')}
               </CardTitle>
               <CardDescription>{t('Delete.description')}</CardDescription>

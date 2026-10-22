@@ -64,6 +64,7 @@
     "archive": "Gruppe archivieren",
     "unarchive": "Gruppe wiederherstellen",
     "removeRecent": "Aus kürzlichen Gruppen entfernen",
+    "deleteGroup": "Gruppe löschen",
     "RecentRemovedToast": {
       "title": "Gruppe wurde entfernt",
       "description": "Die Gruppe wurde aus deiner Liste kürzlicher Gruppen entfernt.",
@@ -161,8 +162,16 @@
   },
   "DeleteGroupButton": {
     "title": "Gruppe löschen",
-    "description": "Willst du diese Gruppe wirklich löschen? Gib zum Bestätigen den Gruppennamen ein:",
+    "description": "Bist du sicher, dass du diese Gruppe löschen möchtest? Alle zugehörigen Daten und Ausgaben werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
     "groupNameField": "Gruppenname",
+    "confirmPrompt": "Zur Bestätigung gib bitte den Gruppennamen ein:",
+    "confirmButton": "Gruppe löschen",
+    "deleting": "Wird gelöscht…",
+    "cancel": "Abbrechen",
+    "SuccessToast": {
+      "title": "Gruppe gelöscht",
+      "description": "\"{name}\" wurde vollständig entfernt."
+    },
     "ErrorToast": {
       "title": "Gruppe konnte nicht gelöscht werden",
       "description": "Sie wurde möglicherweise inzwischen umbenannt oder gelöscht. Lade die Seite neu und versuche es erneut."
@@ -172,6 +181,7 @@
     "title": "Zur Löschung vorgemerkte Gruppe",
     "description": "Diese Gruppe wurde zur Löschung vorgemerkt und wird am {date} endgültig gelöscht. Wenn du diese Gruppe reaktivieren möchtest, klicke auf die Schaltfläche unten.",
     "restore": "Gruppe wiederherstellen",
+    "deleteNow": "Jetzt endgültig löschen",
     "pastDeadline": "Diese Gruppe wurde zur Löschung vorgemerkt und wird in Kürze endgültig gelöscht. Sie kann nicht mehr wiederhergestellt werden.",
     "ErrorToast": {
       "title": "Gruppe konnte nicht wiederhergestellt werden",

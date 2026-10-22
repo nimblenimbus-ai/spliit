@@ -7,6 +7,7 @@ import { defineConfig } from 'prisma/config'
 // a missing `.env` file or `dotenv` package is harmless.
 try {
   require('dotenv').config()
+  require('dotenv').config({ path: '.env.local', override: true })
 } catch {}
 
 export default defineConfig({

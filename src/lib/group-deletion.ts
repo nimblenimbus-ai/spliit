@@ -54,37 +54,84 @@ export async function purgeScheduledGroups(
 }
 
 async function purgeGroup(groupId: string, now: Date) {
+  await permanentlyDeleteGroup(groupId, undefined, now)
+}
+
+/**
+ * Permanently deletes a group with all its data, expenses, participants,
+ * activities, and uploaded documents.
+ */
+export async function permanentlyDeleteGroup(
+  groupId: string,
+  groupName?: string,
+  now?: Date,
+) {
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: { id: true, name: true, deleteAt: true },
+  })
+  if (!group) throw new Error('Invalid group ID')
+
+  if (
+    groupName !== undefined &&
+    group.name.trim().toLowerCase() !== groupName.trim().toLowerCase()
+  ) {
+    throw new Error('Group name does not match')
+  }
+
+  // If a purge deadline was specified (from cron job), enforce it
+  if (now !== undefined && (!group.deleteAt || group.deleteAt > now)) {
+    throw new Error(
+      'Group is not scheduled for deletion or deadline not reached',
+    )
+  }
+
   const documents = await prisma.expenseDocument.findMany({
     where: { Expense: { groupId } },
     select: { id: true, url: true },
   })
 
   // Files go first: once the rows are gone, nothing points to them anymore.
-  // URLs outside the configured bucket are not ours to delete. The group can
-  // no longer be restored at this point (see restoreGroup), so this is final.
-  // One DeleteObject per file rather than a DeleteObjects batch, which some
-  // S3-compatible providers reject, but several at a time.
+  // URLs outside the configured bucket are not ours to delete.
   const keys = documents
     .map(({ url }) => getUploadKeyFromUrl(url))
-    .filter((key) => key !== null)
-  for (let i = 0; i < keys.length; i += S3_DELETE_CONCURRENCY) {
-    await Promise.all(
-      keys
-        .slice(i, i + S3_DELETE_CONCURRENCY)
-        .map((key) =>
-          getS3Client().send(
-            new DeleteObjectCommand({ Bucket: env.S3_UPLOAD_BUCKET, Key: key }),
-          ),
+    .filter((key): key is string => key !== null)
+  if (keys.length > 0 && env.S3_UPLOAD_BUCKET) {
+    for (let i = 0; i < keys.length; i += S3_DELETE_CONCURRENCY) {
+      await Promise.all(
+        keys.slice(i, i + S3_DELETE_CONCURRENCY).map((key) =>
+          getS3Client()
+            .send(
+              new DeleteObjectCommand({
+                Bucket: env.S3_UPLOAD_BUCKET,
+                Key: key,
+              }),
+            )
+            .catch((err) => {
+              console.warn(`Failed to delete S3 object ${key}`, err)
+            }),
         ),
-    )
+      )
+    }
   }
 
-  // Deleting the group cascades to its participants, expenses and activities,
-  // but documents are only detached from their expense, so they go explicitly.
+  // Remove groupId from any sync GroupDirectory
+  const matchingDirectories = await prisma.groupDirectory.findMany({
+    where: { groupIds: { has: groupId } },
+    select: { id: true, groupIds: true },
+  })
+  for (const dir of matchingDirectories) {
+    await prisma.groupDirectory.update({
+      where: { id: dir.id },
+      data: { groupIds: dir.groupIds.filter((id) => id !== groupId) },
+    })
+  }
+
+  // Deleting the group cascades to its participants, expenses, splits and activities.
   await prisma.$transaction([
     prisma.expenseDocument.deleteMany({
       where: { id: { in: documents.map((document) => document.id) } },
     }),
-    prisma.group.delete({ where: { id: groupId, deleteAt: { lte: now } } }),
+    prisma.group.delete({ where: { id: groupId } }),
   ])
 }

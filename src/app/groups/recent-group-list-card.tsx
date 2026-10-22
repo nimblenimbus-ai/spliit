@@ -6,21 +6,24 @@ import {
   unarchiveGroup,
   unstarGroup,
 } from '@/app/groups/recent-groups-helpers'
+import { DeleteGroupDialog } from '@/components/delete-group-dialog'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/components/ui/use-toast'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { StarFilledIcon } from '@radix-ui/react-icons'
-import { Calendar, MoreHorizontal, Star, Users } from 'lucide-react'
+import { Calendar, MoreHorizontal, Star, Trash2, Users } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export function RecentGroupListCard({
   group,
@@ -39,6 +42,7 @@ export function RecentGroupListCard({
   const locale = useLocale()
   const toast = useToast()
   const t = useTranslations('Groups')
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   return (
     <li key={group.id}>
@@ -93,7 +97,6 @@ export function RecentGroupListCard({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      className="text-destructive"
                       onClick={(event) => {
                         event.stopPropagation()
                         deleteRecentGroup(group)
@@ -120,6 +123,20 @@ export function RecentGroupListCard({
                       }}
                     >
                       {t(isArchived ? 'unarchive' : 'archive')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                      onSelect={(event) => {
+                        event.preventDefault()
+                        setIsDeleteDialogOpen(true)
+                      }}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {t('deleteGroup')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -154,6 +171,13 @@ export function RecentGroupListCard({
           </div>
         </div>
       </Button>
+      <DeleteGroupDialog
+        group={group}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onSuccess={refreshGroupsFromStorage}
+        redirectOnSuccess={false}
+      />
     </li>
   )
 }

@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { randomId } from '@/lib/random'
 import { nextRecurringDate } from '@/lib/recurrence'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
+import { permanentlyDeleteGroup } from './group-deletion'
 
 // Re-exported for backwards compatibility with existing server-side importers.
 export { randomId }
@@ -173,6 +174,14 @@ export async function restoreGroup(groupId: string, participantId?: string) {
     )
 
   await logActivity(groupId, ActivityType.RESTORE_GROUP, { participantId })
+}
+
+export async function deleteGroup(
+  groupId: string,
+  groupName?: string,
+  _participantId?: string,
+) {
+  await permanentlyDeleteGroup(groupId, groupName)
 }
 
 export async function getGroupExpensesParticipants(groupId: string) {

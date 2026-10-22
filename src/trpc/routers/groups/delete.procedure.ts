@@ -1,4 +1,4 @@
-import { scheduleGroupDeletion } from '@/lib/api'
+import { deleteGroup } from '@/lib/api'
 import { getRuntimeFeatureFlags } from '@/lib/featureFlags'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
@@ -13,8 +13,6 @@ export const deleteGroupProcedure = baseProcedure
     }),
   )
   .mutation(async ({ input: { groupId, groupName, participantId } }) => {
-    // Restoring stays available while the feature is disabled, so that groups
-    // scheduled before it was turned off can still be saved.
     const { enableGroupDeletion } = await getRuntimeFeatureFlags()
     if (!enableGroupDeletion) {
       throw new TRPCError({
@@ -22,5 +20,5 @@ export const deleteGroupProcedure = baseProcedure
         message: 'Group deletion is not enabled on this instance.',
       })
     }
-    await scheduleGroupDeletion(groupId, groupName, participantId)
+    await deleteGroup(groupId, groupName, participantId)
   })

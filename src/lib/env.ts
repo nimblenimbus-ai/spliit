@@ -192,13 +192,6 @@ const envSchema = z
           'If ENABLE_EXPENSE_DOCUMENTS is set, then S3_* must be set too',
       })
     }
-    if (env.ENABLE_GROUP_DELETION && !env.CRON_SECRET) {
-      ctx.addIssue({
-        code: ZodIssueCode.custom,
-        message:
-          'If ENABLE_GROUP_DELETION is set, then CRON_SECRET must be set too, and /api/cron/purge-deleted-groups called on a schedule',
-      })
-    }
     if (
       (enableReceiptExtract || enableCategoryExtract) &&
       !env.OPENAI_API_KEY

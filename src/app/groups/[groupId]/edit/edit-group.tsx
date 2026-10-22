@@ -25,7 +25,7 @@ export const EditGroup = ({
         await utils.groups.invalidate()
       }}
       protectedParticipantIds={data?.participantsWithExpenses}
-      enableGroupDeletion={runtimeFeatureFlags.enableGroupDeletion}
+      enableGroupDeletion={runtimeFeatureFlags?.enableGroupDeletion ?? true}
     />
   )
 }

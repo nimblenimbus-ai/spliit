@@ -83,6 +83,7 @@
     "archive": "Archive group",
     "unarchive": "Unarchive group",
     "removeRecent": "Remove from recent groups",
+    "deleteGroup": "Delete group",
     "RecentRemovedToast": {
       "title": "Group has been removed",
       "description": "The group was removed from your recent groups list.",
@@ -159,13 +160,21 @@
     },
     "Delete": {
       "title": "Delete group",
-      "description": "Deleting a group will result in a 30 days deactivation period, after which all data will be permanently deleted and unrecoverable."
+      "description": "Deleting a group will permanently remove all data, expenses, and history. This action cannot be undone."
     }
   },
   "DeleteGroupButton": {
     "title": "Delete group",
-    "description": "Do you really want to delete this group? To confirm, please enter the group name below.",
+    "description": "Are you sure you want to delete this group? All associated data and expenses will be permanently removed. This action cannot be undone.",
     "groupNameField": "Group name",
+    "confirmPrompt": "To confirm, please enter the group name:",
+    "confirmButton": "Delete group",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "SuccessToast": {
+      "title": "Group deleted",
+      "description": "\"{name}\" has been completely removed."
+    },
     "ErrorToast": {
       "title": "Could not delete the group",
       "description": "It may have been renamed or deleted in the meantime. Reload the page and try again."
@@ -175,6 +184,7 @@
     "title": "Group scheduled for deletion",
     "description": "This group was scheduled for deletion and will be permanently deleted on {date}. If you want to restore it, click the button below.",
     "restore": "Restore group",
+    "deleteNow": "Delete permanently now",
     "pastDeadline": "This group was scheduled for deletion and will be permanently deleted shortly. It can no longer be restored.",
     "ErrorToast": {
       "title": "Could not restore the group",
