@@ -1,5 +1,6 @@
 'use client'
 
+import { GlobalBalanceCard } from '@/app/groups/global-balance-card'
 import { BalancesList } from '@/app/groups/[groupId]/balances-list'
 import { toggleSimplifyDebts } from '@/app/groups/[groupId]/balances/actions'
 import { ReimbursementList } from '@/app/groups/[groupId]/reimbursement-list'
@@ -90,9 +91,21 @@ export default function BalancesAndReimbursements() {
       : (balancesData.pairwiseReimbursements ?? balancesData.reimbursements)
     : []
 
+  const activeUserId =
+    typeof window !== 'undefined'
+      ? localStorage.getItem(`${groupId}-activeUser`) ?? undefined
+      : undefined
+  const activeParticipant = group?.participants.find(
+    (p) => p.id === activeUserId,
+  )
+
   return (
     <>
       <TrackPage path={`/groups/${groupId}/balances`} />
+      <GlobalBalanceCard
+        currentGroupId={groupId}
+        initialPerspective={activeParticipant?.name}
+      />
       <Card className="mb-4">
         <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
