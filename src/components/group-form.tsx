@@ -24,13 +24,6 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Locale } from '@/i18n/request'
 import { useAnalytics } from '@/lib/analytics/context'
 import { getGroup } from '@/lib/api'
@@ -44,10 +37,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { CurrencySelector } from './currency-selector'
-import { Switch } from './ui/switch'
 import { Textarea } from './ui/textarea'
 
 export type Props = {
@@ -103,30 +94,7 @@ export function GroupForm({
   })
   const sendEvent = useAnalytics()
 
-  const [activeUser, setActiveUser] = useState<string | null>(null)
-  useEffect(() => {
-    if (activeUser === null) {
-      const currentActiveUser =
-        fields.find(
-          (f) => f.id === localStorage.getItem(`${group?.id}-activeUser`),
-        )?.name || t('Settings.ActiveUserField.none')
-      setActiveUser(currentActiveUser)
-    }
-  }, [t, activeUser, fields, group?.id])
 
-  const updateActiveUser = () => {
-    if (!activeUser) return
-    if (group?.id) {
-      const participant = group.participants.find((p) => p.name === activeUser)
-      if (participant?.id) {
-        localStorage.setItem(`${group.id}-activeUser`, participant.id)
-      } else {
-        localStorage.setItem(`${group.id}-activeUser`, activeUser)
-      }
-    } else {
-      localStorage.setItem('newGroup-activeUser', activeUser)
-    }
-  }
 
   return (
     <Form {...form}>
@@ -140,11 +108,18 @@ export function GroupForm({
           } else {
             sendEvent({ event: 'group: create', props: {} }, `/groups`)
           }
-          await onSubmit(
-            values,
-            group?.participants.find((p) => p.name === activeUser)?.id ??
-              undefined,
-          )
+          const storedActiveUser =
+            typeof window !== 'undefined' && group?.id
+              ? localStorage.getItem(`${group.id}-activeUser`)
+              : undefined
+          const participantId =
+            storedActiveUser && storedActiveUser !== 'None'
+              ? group?.participants.find(
+                  (p) => p.id === storedActiveUser || p.name === storedActiveUser,
+                )?.id ?? storedActiveUser
+              : undefined
+
+          await onSubmit(values, participantId)
         })}
       >
         <Card className="mb-4">
@@ -337,80 +312,12 @@ export function GroupForm({
           </CardFooter>
         </Card>
 
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle>{t('Settings.title')}</CardTitle>
-            <CardDescription>{t('Settings.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {activeUser !== null && (
-                <FormItem>
-                  <FormLabel>{t('Settings.ActiveUserField.label')}</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={(value) => {
-                        setActiveUser(value)
-                      }}
-                      defaultValue={activeUser}
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={t(
-                            'Settings.ActiveUserField.placeholder',
-                          )}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[
-                          { name: t('Settings.ActiveUserField.none') },
-                          ...form.watch('participants'),
-                        ]
-                          .filter((item) => item.name.length > 0)
-                          .map(({ name }) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>
-                    {t('Settings.ActiveUserField.description')}
-                  </FormDescription>
-                </FormItem>
-              )}
-              <FormField
-                control={form.control}
-                name="simplifyDebts"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5 pr-4">
-                      <FormLabel>Simplify group debts</FormLabel>
-                      <FormDescription>
-                        Automatically combine debts across members to reduce the
-                        total number of repayments.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value ?? true}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
         <div className="flex mt-4 gap-2 justify-between items-center">
           <div className="flex gap-2">
             <SubmitButton
               loadingContent={t(
                 group ? 'Settings.saving' : 'Settings.creating',
               )}
-              onClick={updateActiveUser}
             >
               <Save className="w-4 h-4 mr-2" />{' '}
               {t(group ? 'Settings.save' : 'Settings.create')}

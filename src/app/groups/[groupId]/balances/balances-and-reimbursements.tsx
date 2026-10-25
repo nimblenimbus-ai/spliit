@@ -12,6 +12,13 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { TrackPage } from '@/lib/analytics/track-page'
 import { getCurrencyFromGroup } from '@/lib/utils'
@@ -29,6 +36,37 @@ export default function BalancesAndReimbursements() {
       groupId,
     })
   const t = useTranslations('Balances')
+  const tSettings = useTranslations('GroupForm.Settings')
+
+  const [activeUserId, setActiveUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && group) {
+      const stored = localStorage.getItem(`${groupId}-activeUser`)
+      if (!stored || stored === 'None') {
+        setActiveUserId('None')
+      } else {
+        const matchingParticipant = group.participants.find(
+          (p) => p.id === stored || p.name === stored,
+        )
+        if (matchingParticipant) {
+          setActiveUserId(matchingParticipant.id)
+          if (stored !== matchingParticipant.id) {
+            localStorage.setItem(`${groupId}-activeUser`, matchingParticipant.id)
+          }
+        } else {
+          setActiveUserId('None')
+        }
+      }
+    }
+  }, [groupId, group])
+
+  const handleActiveUserChange = (value: string) => {
+    setActiveUserId(value)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${groupId}-activeUser`, value)
+    }
+  }
 
   const serverSimplifyDebts =
     balancesData?.simplifyDebts ?? group?.simplifyDebts ?? true
@@ -95,6 +133,70 @@ export default function BalancesAndReimbursements() {
       <TrackPage path={`/groups/${groupId}/balances`} />
       <Card className="mb-4">
         <CardHeader>
+          <CardTitle>{tSettings('title')}</CardTitle>
+          <CardDescription>{tSettings('description')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="active-user-select">
+                {tSettings('ActiveUserField.label')}
+              </Label>
+              <Select
+                value={activeUserId ?? undefined}
+                onValueChange={handleActiveUserChange}
+                disabled={isLoading}
+              >
+                <SelectTrigger id="active-user-select">
+                  <SelectValue
+                    placeholder={tSettings(
+                      'ActiveUserField.placeholder',
+                    )}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="None">
+                    {tSettings('ActiveUserField.none')}
+                  </SelectItem>
+                  {group?.participants
+                    .filter((item) => item.name.length > 0)
+                    .map((participant) => (
+                      <SelectItem key={participant.id} value={participant.id}>
+                        {participant.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[0.8rem] text-muted-foreground">
+                {tSettings('ActiveUserField.description')}
+              </p>
+            </div>
+            <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5 pr-4">
+                <Label
+                  htmlFor="simplify-group-debts"
+                  className="text-sm font-medium cursor-pointer"
+                >
+                  Simplify group debts
+                </Label>
+                <p className="text-[0.8rem] text-muted-foreground">
+                  Automatically combine debts across members to reduce the
+                  total number of repayments.
+                </p>
+              </div>
+              <Switch
+                id="simplify-group-debts"
+                data-testid="simplify-debts-toggle"
+                checked={optimisticSimplifyDebts}
+                onCheckedChange={handleToggleSimplifyDebts}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="mb-4">
+        <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
           <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
@@ -111,30 +213,13 @@ export default function BalancesAndReimbursements() {
         </CardContent>
       </Card>
       <Card className="mb-4">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 space-y-0">
-          <div className="space-y-1.5">
-            <CardTitle>{t('Reimbursements.title')}</CardTitle>
-            <CardDescription>
-              {optimisticSimplifyDebts
-                ? t('Reimbursements.description')
-                : 'Showing direct pairwise debts between members without cross-settling across third parties.'}
-            </CardDescription>
-          </div>
-          <div className="flex items-center space-x-2 pt-1">
-            <Switch
-              id="simplify-group-debts"
-              data-testid="simplify-debts-toggle"
-              checked={optimisticSimplifyDebts}
-              onCheckedChange={handleToggleSimplifyDebts}
-              disabled={isLoading}
-            />
-            <Label
-              htmlFor="simplify-group-debts"
-              className="text-sm font-medium cursor-pointer whitespace-nowrap"
-            >
-              Simplify group debts
-            </Label>
-          </div>
+        <CardHeader>
+          <CardTitle>{t('Reimbursements.title')}</CardTitle>
+          <CardDescription>
+            {optimisticSimplifyDebts
+              ? t('Reimbursements.description')
+              : 'Showing direct pairwise debts between members without cross-settling across third parties.'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
