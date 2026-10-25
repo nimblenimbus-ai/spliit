@@ -1,6 +1,7 @@
 'use client'
 
 import { CounterpartySummary } from '@/app/actions/cross-group-balances'
+import { RecentGroups } from '@/app/groups/recent-groups-helpers'
 import { CounterpartyBreakdownDrawer } from '@/components/CounterpartyBreakdownDrawer'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,75 +27,32 @@ import { trpc } from '@/trpc/client'
 import { ChevronRight, RefreshCw, User } from 'lucide-react'
 
 import { useLocale, useTranslations } from 'next-intl'
-import {
-  getArchivedGroups,
-  getRecentGroups,
-  RecentGroups,
-} from '@/app/groups/recent-groups-helpers'
 import { useEffect, useMemo, useState } from 'react'
 
 export function GlobalBalanceCard({
-  groups: propGroups,
-  archivedGroupIds: propArchivedGroupIds,
-  currentGroupId,
-  initialPerspective,
+  groups,
+  archivedGroupIds,
 }: {
-  groups?: RecentGroups
+  groups: RecentGroups
   archivedGroupIds?: string[]
-  currentGroupId?: string
-  initialPerspective?: string
-} = {}) {
-  const [mounted, setMounted] = useState(false)
-  const [storedGroups, setStoredGroups] = useState<RecentGroups>([])
-  const [storedArchived, setStoredArchived] = useState<string[]>([])
-
-  useEffect(() => {
-    setMounted(true)
-    if (!propGroups && typeof window !== 'undefined') {
-      setStoredGroups(getRecentGroups())
-    }
-    if (!propArchivedGroupIds && typeof window !== 'undefined') {
-      setStoredArchived(getArchivedGroups())
-    }
-  }, [propGroups, propArchivedGroupIds])
-
-  const effectiveGroups = propGroups ?? storedGroups
-  const effectiveArchived = propArchivedGroupIds ?? storedArchived
-
+}) {
   const activeGroupIds = useMemo(() => {
-    const archivedSet = new Set(effectiveArchived)
-    let list = effectiveGroups
+    const archivedSet = new Set(archivedGroupIds ?? [])
+    return groups
       .filter((g) => !archivedSet.has(g.id))
       .map((g) => g.id)
+      .slice(0, MAX_GROUPS_PER_QUERY)
+  }, [groups, archivedGroupIds])
 
-    if (
-      currentGroupId &&
-      !list.includes(currentGroupId) &&
-      !archivedSet.has(currentGroupId)
-    ) {
-      list = [currentGroupId, ...list]
-    }
-
-    return list.slice(0, MAX_GROUPS_PER_QUERY)
-  }, [effectiveGroups, effectiveArchived, currentGroupId])
-
-  if (!mounted && !propGroups) return null
   if (activeGroupIds.length === 0) return null
 
-  return (
-    <GlobalBalanceCard_
-      activeGroupIds={activeGroupIds}
-      initialPerspective={initialPerspective}
-    />
-  )
+  return <GlobalBalanceCard_ activeGroupIds={activeGroupIds} />
 }
 
 function GlobalBalanceCard_({
   activeGroupIds,
-  initialPerspective,
 }: {
   activeGroupIds: string[]
-  initialPerspective?: string
 }) {
   const locale = useLocale()
   const t = useTranslations('Groups.GlobalBalance')
@@ -105,15 +63,14 @@ function GlobalBalanceCard_({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [showSettled, setShowSettled] = useState(false)
 
+
   // Load persisted perspective on mount
   useEffect(() => {
     const saved = localStorage.getItem('spliit-perspective-user')
     if (saved) {
       setSelectedPerspective(saved)
-    } else if (initialPerspective) {
-      setSelectedPerspective(initialPerspective)
     }
-  }, [initialPerspective])
+  }, [])
 
   const { data, isLoading, isError, refetch } =
     trpc.groups.balances.crossGroup.useQuery(
